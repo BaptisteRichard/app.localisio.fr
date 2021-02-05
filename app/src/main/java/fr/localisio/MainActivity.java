@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -67,12 +69,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // Déclare mWebView à activity_main (le layout)
+        //noinspection RedundantCast
         mWebView = (WebView) findViewById(R.id.activity_main_webview);
         mWebView.clearCache(true);
         // Configure la webview pour l'utilisation du javascript
@@ -92,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDatabaseEnabled(true);
 
         // Charge l'url
-        mWebView.loadUrl("https://localisio.fr/");
+        mWebView.loadUrl("https://localisio.fr/?app=1.0.1");
 
         /*
          * Les instructions ci-dessous permettent de forcer l'application
@@ -109,6 +115,19 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.activity_main_webview).setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+            case android.R.id.title:
+                mWebView.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ESCAPE));
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
